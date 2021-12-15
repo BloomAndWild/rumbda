@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "rumbda"
+
+Rumbda::Cli::Main.start(ARGV)
