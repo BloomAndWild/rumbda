@@ -1,13 +1,31 @@
 # frozen_string_literal: true
 
-require_relative "error"
+require "yaml"
 
 module Rumbda
+  class ServiceConfigurationError < ::Rumbda::Error; end
+  class CannotReadFile < ::Rumbda::ServiceConfigurationError; end
+  class InvalidYamlError < ::Rumbda::ServiceConfigurationError; end
+
   class ServiceConfiguration
     def load!(file:)
-      unless File.exist?(file)
-        raise ::Rumbda::Error, "Config file \"#{file}\" could not be found"
+      raw_content = begin
+        File.read(file)
+      rescue => exception
+        raise ::Rumbda::CannotReadFile, exception
       end
+
+      parse_configuration(raw_content)
+    end
+
+    private
+
+    def parse_configuration(content)
+        yaml_content = begin
+          YAML.parse(content)
+        rescue => exception
+          raise ::Rumbda::InvalidYamlError, exception
+        end
     end
   end
 end
