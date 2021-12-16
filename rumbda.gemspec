@@ -33,4 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "thor"
 
   spec.add_development_dependency "rspec", "~> 3.2"
+  spec.metadata = {
+    "rubygems_mfa_required" => "true"
+  }
 end

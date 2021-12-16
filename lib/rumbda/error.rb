@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
 module Rumbda
-  class Parser
-  end
+    class Error < ::Exception; end
 end
