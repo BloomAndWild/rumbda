@@ -16,7 +16,7 @@ module Rumbda
              default: "service.yml",
              desc: "Service configuration file"
 
-      option :env,
+      option :environment,
              required: true,
              aliases: "-e",
              desc: "Environment to deploy to (e.g. staging, production)"
@@ -38,9 +38,9 @@ module Rumbda
              desc: "Name of the ECR registry to deploy to. Defaults to the ecr_registry value configured for the given environment in the service configuration file"
 
       option :image_tag,
-             required: false,
+             required: true,
              aliases: "-t",
-             desc: "Unique Image tag to use for the deployment artifact. Defaults to the current git SHA"
+             desc: "Unique Image tag to use for the deployment artifact. This is typically the git SHA being deployed"
 
       def deploy
         ::Rumbda::Actions::Deploy.new(options: options).run

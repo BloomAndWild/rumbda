@@ -4,15 +4,8 @@ module Rumbda
   module Actions
     class Deploy
       def initialize(options:, config: ::Rumbda::ServiceConfiguration.new)
-        config.load!(file: options[:config_file])
-
-
-        # config =        YAML.load_file(options[:config_file]).merge(options.except("env")).deep_symbolize_keys
-        # env =           options[:env]
-        # service =       options[:service]       || config[:service]
-        # functions =     options[:functions]     || config[:functions]
-        # ecr_registry =  options[:ecr_registry]  || config[:environments][options[:env].to_sym][:ecr_registry]
-        # image_tag =     options[:image_tag]     || system("git rev-parse HEAD")
+        config_file = options.delete(:config_file)
+        config.load!(file: config_file, options: options)
 
         # # Build images
         # functions.each do |function|
