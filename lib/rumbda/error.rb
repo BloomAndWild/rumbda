@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Rumbda
-    class Error < ::Exception; end
+  class Error < RuntimeError; end
 end

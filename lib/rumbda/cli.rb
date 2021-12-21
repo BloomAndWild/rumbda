@@ -35,7 +35,7 @@ module Rumbda
       option :ecr_registry,
              required: false,
              aliases: "-ecr",
-             desc: "Name of the ECR registry to deploy to. Defaults to the ecr_registry value configured for the given environment in the service configuration file"
+             desc: "Name of the ECR registry to push to. Defaults to the ecr_registry value configured for the given environment"
 
       option :image_tag,
              required: true,
