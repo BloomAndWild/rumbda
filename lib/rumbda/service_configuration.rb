@@ -75,7 +75,7 @@ module Rumbda
       end
 
       @ecr_registry = current_environment_config["ecr_registry"]
+      raise ::Rumbda::ServiceConfigurationError, "ecr_registry parameter not provided" if ecr_registry.blank?
     end
-    raise ::Rumbda::ServiceConfigurationError, "ecr_registry parameter not provided" if ecr_registry.blank?
   end
 end

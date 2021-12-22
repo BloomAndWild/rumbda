@@ -4,8 +4,7 @@ RSpec.describe Rumbda::ServiceConfiguration do
   describe "#load!" do
     context "errors" do
       it "throws an error when the config files doesn't exist" do
-        non_existent_file = "non existent file"
-        expect { subject.load!(file: non_existent_file) }.to raise_error(::Rumbda::CannotReadFile)
+        expect { subject.load!(file: "non existent file") }.to raise_error(::Rumbda::CannotReadFile)
       end
 
       it "throws an error when the config file is not in YAML format" do
