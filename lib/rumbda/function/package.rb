@@ -4,7 +4,7 @@ module Rumbda
   module Function
     class PackageError < ::Rumbda::Error; end
     class CannotReadDockerfile < ::Rumbda::Function::PackageError; end
-    class InvalidDockerTagError < ::Rumbda::Function::PackageError; end
+    class DockerBuildError < ::Rumbda::Function::PackageError; end
     class DockerPushError < ::Rumbda::Function::PackageError; end
     class RemoveImageError < ::Rumbda::Function::PackageError; end
 
@@ -17,13 +17,8 @@ module Rumbda
       def run
         validate_dockerfile_exists
         build_image
-        tag_image
         push_image
         remove_image
-      end
-
-      def image_uri
-        @__image_uri ||= "#{config.ecr_registry}/#{config.environment}-#{config.service}"
       end
 
       private
@@ -37,25 +32,21 @@ module Rumbda
       end
 
       def build_image
-        docker_client.build_from_dir("#{Rumbda.project_root}/#{config.dockerfile}", image_uri)
-      end
-
-      def tag_image
-        docker_client.tag(image_uri, config.image_tag)
+        docker_client.build_and_tag("#{Rumbda.project_root}/#{config.dockerfile}", config.image_uri)
       rescue StandardError => e
-        raise InvalidDockerTagError, "Failed to tag: #{image_uri} \n #{e.message}"
+        raise DockerBuildError, "Docker build failed for #{config.image_uri}: #{e.message}"
       end
 
       def push_image
-        docker_client.push(image_uri, config.image_tag)
+        docker_client.push(config.image_uri)
       rescue StandardError => e
-        raise DockerPushError, "Docker push failed for #{image_uri}: #{e.message}"
+        raise DockerPushError, "Docker push failed for #{config.image_uri}: #{e.message}"
       end
 
       def remove_image
         docker_client.remove
       rescue StandardError => e
-        raise RemoveImageError, "Failed to remove image: #{image_uri} \n #{e.message}"
+        raise RemoveImageError, "Failed to remove image: #{config.image_uri} \n #{e.message}"
       end
     end
 
@@ -63,23 +54,16 @@ module Rumbda
       include Thor::Actions
 
       no_commands do
-        def build_from_dir(dockerfile, image_uri)
-          say "Building image: #{image_uri} with dockerfile: #{dockerfile}..."
-          raise StandardError unless run "docker build -f #{dockerfile} -t #{image_uri} ."
+        def build_and_tag(dockerfile, _image_uri)
+          say "Building image: #{config.image_uri} with dockerfile: #{dockerfile}..."
+          raise StandardError unless run "docker build -f #{dockerfile} -t #{config.image_uri} ."
 
           say "Done", :green
         end
 
-        def tag(image_uri, tag)
-          say "Tagging image with tag: #{tag}..."
-          raise StandardError unless run "docker tag #{image_uri} #{image_uri}:#{tag}"
-
-          say "Done", :green
-        end
-
-        def push(image_uri, tag)
-          say "Pushing image: #{image_uri}:#{tag}..."
-          raise StandardError unless run "docker push #{image_uri}:#{tag}"
+        def push(_image_uri)
+          say "Pushing image: #{config.image_uri}"
+          raise StandardError unless run "docker push #{config.image_uri}"
 
           say "Done", :green
         end

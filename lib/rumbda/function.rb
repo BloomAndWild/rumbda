@@ -48,7 +48,6 @@ module Rumbda
       desc "package", "Build and upload your function code to AWS"
       def package
         config = Config.new(options)
-        config.load!
         ::Rumbda::Function::Package.new(config).run
       rescue ::Rumbda::Error => e
         raise ::Thor::Error, set_color(e.message, :red)
@@ -56,7 +55,8 @@ module Rumbda
 
       desc "deploy", "Update lambda function(s) code in AWS"
       def deploy
-        ::Rumbda::Function::Deploy.new(options: options).run
+        config = Config.new(options)
+        ::Rumbda::Function::Deploy.new(config).run
       rescue ::Rumbda::Error => e
         raise ::Thor::Error, set_color(e.message, :red)
       end

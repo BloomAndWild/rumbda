@@ -12,13 +12,17 @@ RSpec.describe Rumbda::Function::Package do
   let(:dockerfile) { "spec/support/test_repository/Dockerfile" }
 
   let(:config) do
-    instance_double("Rumbda::Function::Config", {
-                      environment: environment,
-                      service: service,
-                      ecr_registry: ecr_registry,
-                      image_tag: image_tag,
-                      dockerfile: dockerfile
-                    })
+    instance_double(
+      "Rumbda::Function::Config",
+      {
+        environment: environment,
+        service: service,
+        ecr_registry: ecr_registry,
+        image_tag: image_tag,
+        dockerfile: dockerfile,
+        image_uri: "#{ecr_registry}/#{environment}-#{service}:#{image_tag}"
+      }
+    )
   end
 
   let(:docker_client) { instance_double("Rumbda::Function::DockerClient") }
@@ -32,21 +36,19 @@ RSpec.describe Rumbda::Function::Package do
       end
     end
 
-    context "when the Docker tag is invalid" do
+    context "when building the image fails" do
       before do
-        allow(docker_client).to receive(:build_from_dir)
-        allow(docker_client).to receive(:tag).and_raise(StandardError)
+        allow(docker_client).to receive(:build_and_tag).and_raise(StandardError)
       end
 
       it "throws an error" do
-        expect { subject.run }.to raise_error(::Rumbda::Function::PackageError)
+        expect { subject.run }.to raise_error(::Rumbda::Function::DockerBuildError)
       end
     end
 
     context "when pushing the image fails" do
       before do
-        allow(docker_client).to receive(:build_from_dir)
-        allow(docker_client).to receive(:tag)
+        allow(docker_client).to receive(:build_and_tag)
         allow(docker_client).to receive(:push).and_raise(StandardError)
       end
 
@@ -57,9 +59,8 @@ RSpec.describe Rumbda::Function::Package do
 
     context "when removing the image fails" do
       before do
-        expect(docker_client).to receive(:build_from_dir)
-        expect(docker_client).to receive(:tag).with(subject.image_uri, image_tag)
-        expect(docker_client).to receive(:push).with(subject.image_uri, image_tag)
+        expect(docker_client).to receive(:build_and_tag)
+        expect(docker_client).to receive(:push).with(config.image_uri)
         allow(docker_client).to receive(:remove).and_raise(StandardError)
       end
 
@@ -70,18 +71,11 @@ RSpec.describe Rumbda::Function::Package do
 
     context "success" do
       it "builds, tags, pushes and removes the image" do
-        expect(docker_client).to receive(:build_from_dir)
-        expect(docker_client).to receive(:tag).with(subject.image_uri, image_tag)
-        expect(docker_client).to receive(:push).with(subject.image_uri, image_tag)
+        expect(docker_client).to receive(:build_and_tag)
+        expect(docker_client).to receive(:push).with(config.image_uri)
         expect(docker_client).to receive(:remove)
         subject.run
       end
-    end
-  end
-
-  describe "#image_uri" do
-    it "returns the image uri" do
-      expect(subject.image_uri).to eq("#{ecr_registry}/#{environment}-#{service}")
     end
   end
 end

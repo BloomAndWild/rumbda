@@ -3,31 +3,22 @@
 module Rumbda
   module Function
     class Deploy
-      def initialize(options:, config: ::Rumbda::ServiceConfiguration.new)
-        # config_file = options.delete(:config_file)
-        # config.load!(file: config_file, options: options)
-
-        # # Build images
-        # functions.each do |function|
-        #   unless File.exist?("app/#{function}")
-        #     raise ::Thor::Error,
-        #           set_color("ERROR: Directory 'app/#{function}' could not be found",
-        #                     :red)
-        #   end
-        #   unless File.exist?("app/#{function}/Dockerfile")
-        #     raise ::Thor::Error,
-        #           set_color("ERROR: File 'app/#{function}/Dockerfile' could not be found",
-        #                     :red)
-        #   end
-
-        #   image_uri = "#{ecr_registry}/#{env}-#{service}/#{function}:#{image_tag}"
-        #   run "docker build -f ./app/#{function}/Dockerfile --build-arg handler=app/#{function}/handler.rb -t #{image_uri} ."
-        #   run "docker push #{image_uri}"
-        #   run "aws lambda update-function-code --function-name #{env}-#{service}-#{function} --image-uri #{image_uri}"
-        # end
+      def initialize(config, lambda_client = LambdaClient.new)
+        @config = config
+        @lambda_client = lambda_client
       end
 
-      def run; end
+      def run
+        config.functions.each do |function|
+          lambda_client.update_function_code(function, config.image_uri)
+        end
+      end
+    end
+
+    class LambdaClient
+      def update_function_code(function, image_uri)
+        puts "Updating function #{function} with image #{image_uri}"
+      end
     end
   end
 end

@@ -11,7 +11,16 @@ module Rumbda
 
       def initialize(options)
         @options = options
+        load!
       end
+
+      def image_uri
+        @__image_uri ||= "#{ecr_registry}/#{environment}-#{service}:#{image_tag}"
+      end
+
+      private
+
+      attr_reader :yaml_content, :options
 
       def load!
         check_file_exists
@@ -23,10 +32,6 @@ module Rumbda
         parse_dockerfile!
         parse_ecr_registry!
       end
-
-      private
-
-      attr_reader :yaml_content, :options
 
       def check_file_exists
         config_file = "#{Rumbda.project_root}/#{options[:config_file]}"
