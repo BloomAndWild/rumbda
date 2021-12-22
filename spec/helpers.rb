@@ -6,6 +6,6 @@ module Helpers
   end
 
   def parsed_service_yaml
-    YAML.load_file(support_file("service.yml")).deep_symbolize_keys
+    YAML.load_file(support_file("service.yml")).with_indifferent_access
   end
 end

@@ -8,15 +8,14 @@ require "active_support/core_ext/hash"
 module Rumbda
   module Function
     class ConfigError < ::Rumbda::Error; end
-    class CannotReadFile < ::Rumbda::Function::ConfigError; end
+    class CannotReadConfigFile < ::Rumbda::Function::ConfigError; end
     class InvalidYamlError < ::Rumbda::Function::ConfigError; end
 
     class Config
       attr_reader :service, :environment, :functions, :image_tag, :ecr_registry, :dockerfile
 
-      def initialize(file:, options: {})
-        @file = file
-        @options = options.deep_symbolize_keys
+      def initialize(options)
+        @options = options
       end
 
       def load!
@@ -35,12 +34,14 @@ module Rumbda
       attr_reader :yaml_content, :options
 
       def check_file_exists
-        raise ::Rumbda::Function::CannotReadFile unless File.exist?("#{Rumbda.project_root}/#{@file}")
+        config_file = "#{Rumbda.project_root}/#{options[:config_file]}"
+        return if File.exist?(config_file)
+        raise ::Rumbda::Function::CannotReadConfigFile, "config file #{config_file} does not exist"  
       end
 
       def load_yaml
         @yaml_content = begin
-          YAML.load_file(@file).deep_symbolize_keys
+          YAML.load_file(options[:config_file]).with_indifferent_access
         rescue StandardError => e
           raise ::Rumbda::Function::InvalidYamlError, e
         end
@@ -79,13 +80,10 @@ module Rumbda
         @ecr_registry = options[:ecr_registry]
         return unless ecr_registry.blank?
 
-        environments = yaml_content[:environments]
-        raise ::Rumbda::Function::ConfigError, "environments block in config file is not a Hash" if environments.class != Hash
-
-        current_environment_config = environments[environment]
+        current_environment_config = yaml_content[:environments][environment]
         if current_environment_config.blank?
           raise ::Rumbda::Function::ConfigError,
-                "environments block in config file is missing options for the environment #{environment}"
+                "environments block in config file is missing options for the environment called '#{environment}'"
         end
 
         @ecr_registry = current_environment_config[:ecr_registry]

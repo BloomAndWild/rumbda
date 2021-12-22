@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe Rumbda::Function::Config do
-  subject { described_class.new(file: config_file, options: options) }
+  subject { described_class.new(options) }
 
   let(:config_file) { "spec/support/service.yml" }
   let(:environment) { :test }
@@ -29,7 +29,7 @@ RSpec.describe Rumbda::Function::Config do
       context "when it doesn't exist" do
         let(:config_file) { "spec/support/service.yml.doesnotexist" }
         it "throws an error" do
-          expect { subject.load! }.to raise_error(::Rumbda::Function::CannotReadFile)
+          expect { subject.load! }.to raise_error(::Rumbda::Function::CannotReadConfigFile)
         end
       end
     end

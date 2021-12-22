@@ -47,8 +47,9 @@ module Rumbda
 
       desc "package", "Build and upload your function code to AWS"
       def package
-        binding.irb
-        ::Rumbda::Function::Package.new(options: options).run
+        config = Config.new(options)
+        config.load!
+        ::Rumbda::Function::Package.new(config).run
       rescue ::Rumbda::Error => e
         raise ::Thor::Error, set_color(e.message, :red)
       end
