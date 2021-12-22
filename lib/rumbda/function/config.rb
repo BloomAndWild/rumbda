@@ -12,7 +12,7 @@ module Rumbda
     class InvalidYamlError < ::Rumbda::Function::ConfigError; end
 
     class Config
-      attr_reader :service, :environment, :functions, :image_tag, :ecr_registry
+      attr_reader :service, :environment, :functions, :image_tag, :ecr_registry, :dockerfile
 
       def initialize(file:, options: {})
         @file = file
@@ -26,6 +26,7 @@ module Rumbda
         parse_service!
         parse_functions!
         parse_image_tag!
+        parse_dockerfile!
         parse_ecr_registry!
       end
 
@@ -67,6 +68,11 @@ module Rumbda
       def parse_image_tag!
         @image_tag = options[:image_tag]
         raise ::Rumbda::Function::ConfigError, "image_tag parameter not provided" if image_tag.blank?
+      end
+
+      def parse_dockerfile!
+        @dockerfile = options[:dockerfile]
+        raise ::Rumbda::Function::ConfigError, "dockerfile parameter not provided" if dockerfile.blank?
       end
 
       def parse_ecr_registry!

@@ -138,6 +138,22 @@ RSpec.describe Rumbda::Function::Config do
       end
     end
 
+    context "parsing the dockerfile" do
+      context "when the dockerfile is in the options" do
+        it "loads the config file" do
+          expect { subject.load! }.to_not raise_error
+          expect(subject.dockerfile).to eq(dockerfile)
+        end
+
+        context "when the dockerfile is not in the options" do
+          let(:dockerfile) { nil }
+          it "throws an error" do
+            expect { subject.load! }.to raise_error(::Rumbda::Function::ConfigError, /dockerfile/)
+          end
+        end
+      end
+    end
+
     context "parsing the ecr registry" do
       context "when the ecr registry is in the options" do
         it "loads the config file" do
