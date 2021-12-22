@@ -13,12 +13,12 @@ RSpec.describe Rumbda::Function::Package do
 
   let(:config) do
     instance_double("Rumbda::Function::Config", {
-      environment: environment,
-      service: service,
-      ecr_registry: ecr_registry,
-      image_tag: image_tag,
-      dockerfile: dockerfile,
-    })
+                      environment: environment,
+                      service: service,
+                      ecr_registry: ecr_registry,
+                      image_tag: image_tag,
+                      dockerfile: dockerfile
+                    })
   end
 
   let(:docker_client) { instance_double("Rumbda::Function::DockerClient") }

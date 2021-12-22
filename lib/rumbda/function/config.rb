@@ -36,7 +36,8 @@ module Rumbda
       def check_file_exists
         config_file = "#{Rumbda.project_root}/#{options[:config_file]}"
         return if File.exist?(config_file)
-        raise ::Rumbda::Function::CannotReadConfigFile, "config file #{config_file} does not exist"  
+
+        raise ::Rumbda::Function::CannotReadConfigFile, "config file #{config_file} does not exist"
       end
 
       def load_yaml

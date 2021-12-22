@@ -9,7 +9,7 @@ module Rumbda
     class RemoveImageError < ::Rumbda::Function::PackageError; end
 
     class Package
-      def initialize(config, docker_client=DockerClient.new)
+      def initialize(config, docker_client = DockerClient.new)
         @config = config
         @docker_client = docker_client
       end
@@ -37,23 +37,23 @@ module Rumbda
       end
 
       def build_image
-        @docker_client.build_from_dir("#{Rumbda.project_root}/#{config.dockerfile}", image_uri)
+        docker_client.build_from_dir("#{Rumbda.project_root}/#{config.dockerfile}", image_uri)
       end
 
       def tag_image
-        @docker_client.tag(image_uri, config.image_tag)
+        docker_client.tag(image_uri, config.image_tag)
       rescue StandardError => e
         raise InvalidDockerTagError, "Failed to tag: #{image_uri} \n #{e.message}"
       end
 
       def push_image
-        @docker_client.push(image_uri, config.image_tag)
+        docker_client.push(image_uri, config.image_tag)
       rescue StandardError => e
         raise DockerPushError, "Docker push failed for #{image_uri}: #{e.message}"
       end
 
       def remove_image
-        @docker_client.remove
+        docker_client.remove
       rescue StandardError => e
         raise RemoveImageError, "Failed to remove image: #{image_uri} \n #{e.message}"
       end
@@ -62,36 +62,34 @@ module Rumbda
     class DockerClient < Thor
       include Thor::Actions
 
-      def build_from_dir(dockerfile, image_uri)
-        say "Building image: #{image_uri} with dockerfile: #{dockerfile}..."
-        unless run "docker build -f #{dockerfile} -t #{image_uri} ."
-          raise StandardError
-        end
-        say "Done", :green
-      end
-      
-      def tag(image_uri, tag)
-        say "Tagging image with tag: #{tag}..."
-        unless run "docker tag #{image_uri} #{image_uri}:#{tag}"
-          raise StandardError
-        end
-        say "Done", :green
-      end
-      
-      def push(image_uri, tag)
-        say "Pushing image: #{image_uri}:#{tag}..."
-        unless run "docker push #{image_uri}:#{tag}"
-          raise StandardError
-        end
-        say "Done", :green
-      end
+      no_commands do
+        def build_from_dir(dockerfile, image_uri)
+          say "Building image: #{image_uri} with dockerfile: #{dockerfile}..."
+          raise StandardError unless run "docker build -f #{dockerfile} -t #{image_uri} ."
 
-      def remove
-        say "Removing intermediate image..."
-        unless run "docker system prune -f"
-          raise StandardError
+          say "Done", :green
         end
-        say "Done", :green
+
+        def tag(image_uri, tag)
+          say "Tagging image with tag: #{tag}..."
+          raise StandardError unless run "docker tag #{image_uri} #{image_uri}:#{tag}"
+
+          say "Done", :green
+        end
+
+        def push(image_uri, tag)
+          say "Pushing image: #{image_uri}:#{tag}..."
+          raise StandardError unless run "docker push #{image_uri}:#{tag}"
+
+          say "Done", :green
+        end
+
+        def remove
+          say "Removing intermediate image..."
+          raise StandardError unless run "docker system prune -f"
+
+          say "Done", :green
+        end
       end
     end
   end
