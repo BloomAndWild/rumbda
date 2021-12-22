@@ -2,6 +2,10 @@
 
 require "docker-api"
 require "thor"
+require "yaml"
+require "active_support/isolated_execution_state"
+require "active_support/core_ext/object/blank"
+require "active_support/core_ext/hash"
 
 require_relative "rumbda/error"
 require_relative "rumbda/function"

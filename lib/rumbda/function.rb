@@ -10,7 +10,7 @@ module Rumbda
       class_option :config_file,
                    required: false,
                    aliases: "-c",
-                   default: "service.yml",
+                   default: "rumbda.yml",
                    desc: "Service configuration file"
 
       class_option :environment,

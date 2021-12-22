@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require "yaml"
-require "active_support/isolated_execution_state"
-require "active_support/core_ext/object/blank"
-require "active_support/core_ext/hash"
-
 module Rumbda
   module Function
     class ConfigError < ::Rumbda::Error; end
