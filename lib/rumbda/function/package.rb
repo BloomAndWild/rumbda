@@ -2,29 +2,58 @@
 
 module Rumbda
   module Function
+    class Function::PackageError < ::Rumbda::Error; end
+    class CannotReadDockerfile < ::Rumbda::Function::PackageError; end
+    class InvalidDockerTagError < ::Rumbda::Function::PackageError; end
+    class DockerPushError < ::Rumbda::Function::PackageError; end
+    class RemoveImageError < ::Rumbda::Function::PackageError; end
+
     class Package
-      def initialize(options:, config: ::Rumbda::ServiceConfiguration.new)
-        config_file = options.delete(:config_file)
-        config.load!(file: config_file, options: options)
+      def initialize(options:, docker_builder: Docker::Image)
+        @options = options
+        @docker_builder = docker_builder
+      end
 
-        # # Build images
-        # functions.each do |function|
-        #   unless File.exist?("app/#{function}")
-        #     raise ::Thor::Error,
-        #           set_color("ERROR: Directory 'app/#{function}' could not be found",
-        #                     :red)
-        #   end
-        #   unless File.exist?("app/#{function}/Dockerfile")
-        #     raise ::Thor::Error,
-        #           set_color("ERROR: File 'app/#{function}/Dockerfile' could not be found",
-        #                     :red)
-        #   end
+      def run
+        validate_dockerfile_exists
+        build_image
+        tag_image
+        push_image
+        remove_image
+      end
 
-        #   image_uri = "#{ecr_registry}/#{env}-#{service}/#{function}:#{image_tag}"
-        #   run "docker build -f ./app/#{function}/Dockerfile --build-arg handler=app/#{function}/handler.rb -t #{image_uri} ."
-        #   run "docker push #{image_uri}"
-        #   run "aws lambda update-function-code --function-name #{env}-#{service}-#{function} --image-uri #{image_uri}"
-        # end
+      def image_uri
+        @__image_uri ||= "#{@options[:ecr_registry]}/#{@options[:environment]}-#{@options[:service]}:#{@options[:image_tag]}"
+      end
+
+      private
+
+      def validate_dockerfile_exists
+        unless File.exist?("#{Rumbda.project_root}/#{@options[:dockerfile]}")
+          raise CannotReadDockerfile, "Dockerfile #{Rumbda.project_root}/#{@options[:dockerfile]} could not be found"
+        end
+      end
+
+      def build_image
+        @image = @docker_builder.build_from_dir(Rumbda.project_root, { "dockerfile" => @options[:dockerfile] })
+      end
+
+      def tag_image
+        @image.tag(repo: image_uri)
+      rescue StandardError => e
+        raise InvalidDockerTagError, "Failed to tag: #{image_uri} \n #{e.message}"
+      end
+
+      def push_image
+        @image.push(repo: image_uri)
+      rescue StandardError => e
+        raise DockerPushError, "Docker push failed for #{image_uri}: #{e.message}"
+      end
+
+      def remove_image
+        @image.remove(force: true)
+      rescue StandardError => e
+        raise RemoveImageError, "Failed to remove image: #{image_uri} \n #{e.message}"
       end
     end
   end

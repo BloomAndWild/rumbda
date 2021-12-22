@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "lib/rumbda/version"
+require_relative "lib/rumbda/rumbda"
 
 Gem::Specification.new do |spec|
   spec.name = "rumbda"
@@ -29,7 +29,9 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "activesupport"
   spec.add_dependency "aws-sdk-lambda"
+  spec.add_dependency "docker-api"
   spec.add_dependency "thor"
 
   spec.add_development_dependency "rspec", "~> 3.2"

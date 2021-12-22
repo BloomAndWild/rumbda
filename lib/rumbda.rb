@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
+require "docker-api"
 require "thor"
 
 require_relative "rumbda/error"
 require_relative "rumbda/function"
-require_relative "rumbda/service_configuration"
-require_relative "rumbda/version"
+require_relative "rumbda/rumbda"
 
 module Rumbda
   module Cli

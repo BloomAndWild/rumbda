@@ -26,6 +26,8 @@ module Rumbda
         #   run "aws lambda update-function-code --function-name #{env}-#{service}-#{function} --image-uri #{image_uri}"
         # end
       end
+
+      def run; end
     end
   end
 end
