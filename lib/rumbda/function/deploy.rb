@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 module Rumbda
-  module Actions
+  module Function
     class Deploy
       def initialize(options:, config: ::Rumbda::ServiceConfiguration.new)
-        config_file = options.delete(:config_file)
-        config.load!(file: config_file, options: options)
+        # config_file = options.delete(:config_file)
+        # config.load!(file: config_file, options: options)
 
         # # Build images
         # functions.each do |function|
