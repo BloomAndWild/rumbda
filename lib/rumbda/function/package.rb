@@ -33,19 +33,19 @@ module Rumbda
 
       def build_image
         docker_client.build_and_tag("#{Rumbda.project_root}/#{config.dockerfile}", config.image_uri)
-      rescue StandardError => e
+      rescue RuntimeError => e
         raise DockerBuildError, "Docker build failed for #{config.image_uri}: #{e.message}"
       end
 
       def push_image
         docker_client.push(config.image_uri)
-      rescue StandardError => e
+      rescue RuntimeError => e
         raise DockerPushError, "Docker push failed for #{config.image_uri}: #{e.message}"
       end
 
       def remove_image
         docker_client.remove
-      rescue StandardError => e
+      rescue RuntimeError => e
         raise RemoveImageError, "Failed to remove image: #{config.image_uri} \n #{e.message}"
       end
     end
@@ -56,21 +56,21 @@ module Rumbda
       no_commands do
         def build_and_tag(dockerfile, _image_uri)
           say "Building image: #{config.image_uri} with dockerfile: #{dockerfile}..."
-          raise StandardError unless run "docker build -f #{dockerfile} -t #{config.image_uri} ."
+          raise RuntimeError unless run "docker build -f #{dockerfile} -t #{config.image_uri} ."
 
           say "Done", :green
         end
 
         def push(_image_uri)
           say "Pushing image: #{config.image_uri}"
-          raise StandardError unless run "docker push #{config.image_uri}"
+          raise RuntimeError unless run "docker push #{config.image_uri}"
 
           say "Done", :green
         end
 
         def remove
           say "Removing intermediate image..."
-          raise StandardError unless run "docker system prune -f"
+          raise RuntimeError unless run "docker system prune -f"
 
           say "Done", :green
         end

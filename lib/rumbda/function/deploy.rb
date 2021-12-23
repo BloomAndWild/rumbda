@@ -2,6 +2,9 @@
 
 module Rumbda
   module Function
+    class FunctionError < ::Rumbda::Error; end
+    class FailedUpdateFunctionCode < ::Rumbda::Function::FunctionError; end
+
     class Deploy
       def initialize(config, lambda_client = LambdaClient.new)
         @config = config
@@ -9,9 +12,11 @@ module Rumbda
       end
 
       def run
-        config.functions.each do |function|
-          lambda_client.update_function_code(function, config.image_uri)
+        @config.functions.each do |function|
+          @lambda_client.update_function_code(function, @config.image_uri)
         end
+      rescue RuntimeError => e
+        raise FailedUpdateFunctionCode, "Failed to update function code: #{e.message}"
       end
     end
 
@@ -19,17 +24,16 @@ module Rumbda
       include Thor::Actions
 
       def initialize
-        @lambda_client = Aws::Lambda::Client.new
+        @aws_lambda = Aws::Lambda::Client.new
       end
 
       no_commands do
         def update_function_code(function, image_uri)
           say "Updating function #{function} with image #{image_uri}"
-          @lambda_client.update_function_code(
-            function_name: function,
-            image_uri: image_uri
-          )
+          @aws_lambda.update_function_code(function_name: function, image_uri: image_uri)
           say "OK", :green
+        rescue Aws::Lambda::Errors::ServiceError => e
+          raise "#{e.message} \n #{e.context}"
         end
       end
     end

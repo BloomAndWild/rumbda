@@ -38,7 +38,7 @@ RSpec.describe Rumbda::Function::Package do
 
     context "when building the image fails" do
       before do
-        allow(docker_client).to receive(:build_and_tag).and_raise(StandardError)
+        allow(docker_client).to receive(:build_and_tag).and_raise(RuntimeError)
       end
 
       it "throws an error" do
@@ -49,7 +49,7 @@ RSpec.describe Rumbda::Function::Package do
     context "when pushing the image fails" do
       before do
         allow(docker_client).to receive(:build_and_tag)
-        allow(docker_client).to receive(:push).and_raise(StandardError)
+        allow(docker_client).to receive(:push).and_raise(RuntimeError)
       end
 
       it "throws an error" do
@@ -61,7 +61,7 @@ RSpec.describe Rumbda::Function::Package do
       before do
         expect(docker_client).to receive(:build_and_tag)
         expect(docker_client).to receive(:push).with(config.image_uri)
-        allow(docker_client).to receive(:remove).and_raise(StandardError)
+        allow(docker_client).to receive(:remove).and_raise(RuntimeError)
       end
 
       it "throws an error" do
