@@ -24,15 +24,8 @@ RSpec.describe Rumbda::Function::Config do
     }
   end
 
-  def formatted_image_uri
-    "#{ecr_registry}/#{environment}-#{service}:#{image_tag}"
-  end
-
-  def formatted_function_names(functions)
-    functions.map do |function|
-      "#{environment}-#{service}-#{function}"
-    end
-  end
+  let(:formatted_image_uri) { "#{ecr_registry}/#{environment}-#{service}:#{image_tag}" }
+  let(:formatted_functions) { functions.map { |f| "#{environment}-#{service}-#{f}" } }
 
   describe "#image_uri" do
     it "returns a correctly formatted image uri" do
@@ -42,7 +35,7 @@ RSpec.describe Rumbda::Function::Config do
 
   describe "#functions" do
     it "returns correctly formatted function names" do
-      expect(subject.functions).to eq(formatted_function_names(functions))
+      expect(subject.functions).to eq(formatted_functions)
     end
   end
 
@@ -119,16 +112,20 @@ RSpec.describe Rumbda::Function::Config do
       context "when the functions are in the options" do
         it "loads the config file" do
           expect { subject }.to_not raise_error
-          expect(subject.functions).to eq(formatted_function_names(functions))
+          expect(subject.functions).to eq(formatted_functions)
         end
       end
 
       context "when the functions are not in the options" do
         context "and they are in the config file" do
           let(:functions) { nil }
+          let(:formatted_functions) do
+            parsed_service_yaml[:functions].map { |f| "#{environment}-#{service}-#{f}" }
+          end
+          
           it "loads the config file" do
             expect { subject }.to_not raise_error
-            expect(subject.functions).to eq(formatted_function_names(parsed_service_yaml[:functions]))
+            expect(subject.functions).to eq(formatted_functions)
           end
         end
 
