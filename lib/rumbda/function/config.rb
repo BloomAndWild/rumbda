@@ -19,14 +19,14 @@ module Rumbda
       end
 
       def functions
-        @function_names.map do |function_name|
+        @__functions ||= function_names.map do |function_name|
           "#{environment}-#{service}-#{function_name}"
         end
       end
 
       private
 
-      attr_reader :yaml_content, :options
+      attr_reader :yaml_content, :options, :function_names
 
       def load!
         check_file_exists
@@ -66,9 +66,9 @@ module Rumbda
 
       def parse_functions!
         @function_names = options[:functions] || yaml_content[:functions]
-        raise ::Rumbda::Function::ConfigError, "functions parameter not provided" if @function_names.blank?
+        raise ::Rumbda::Function::ConfigError, "functions parameter not provided" if function_names.blank?
 
-        unless @function_names.instance_of?(Array) && @function_names.all? { |f| f.instance_of?(String) }
+        unless function_names.instance_of?(Array) && function_names.all? { |f| f.instance_of?(String) }
           raise ::Rumbda::Function::ConfigError, "functions parameter is not an Array of String"
         end
       end

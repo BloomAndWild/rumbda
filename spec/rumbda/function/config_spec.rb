@@ -39,7 +39,7 @@ RSpec.describe Rumbda::Function::Config do
     end
   end
 
-  describe "#load!" do
+  describe "loading the options" do
     context "checking the config file" do
       context "when it doesn't exist" do
         let(:config_file) { "spec/support/rumbda.yml.doesnotexist" }
@@ -122,7 +122,7 @@ RSpec.describe Rumbda::Function::Config do
           let(:formatted_functions) do
             parsed_service_yaml[:functions].map { |f| "#{environment}-#{service}-#{f}" }
           end
-          
+
           it "loads the config file" do
             expect { subject }.to_not raise_error
             expect(subject.functions).to eq(formatted_functions)
