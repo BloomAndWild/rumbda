@@ -54,16 +54,16 @@ module Rumbda
       include Thor::Actions
 
       no_commands do
-        def build_and_tag(dockerfile, _image_uri)
-          say "Building image: #{config.image_uri} with dockerfile: #{dockerfile}..."
-          raise RuntimeError unless run "docker build -f #{dockerfile} -t #{config.image_uri} ."
+        def build_and_tag(dockerfile, image_uri)
+          say "Building image: #{image_uri} with dockerfile: #{dockerfile}..."
+          raise RuntimeError unless run "docker build -f #{dockerfile} -t #{image_uri} ."
 
           say "Done", :green
         end
 
-        def push(_image_uri)
-          say "Pushing image: #{config.image_uri}"
-          raise RuntimeError unless run "docker push #{config.image_uri}"
+        def push(image_uri)
+          say "Pushing image: #{image_uri}"
+          raise RuntimeError unless run "docker push #{image_uri}"
 
           say "Done", :green
         end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "aws-sdk-lambda"
+
 module Rumbda
   module Function
     class FunctionError < ::Rumbda::Error; end
@@ -33,7 +35,7 @@ module Rumbda
           @aws_lambda.update_function_code(function_name: function, image_uri: image_uri)
           say "OK", :green
         rescue Aws::Lambda::Errors::ServiceError => e
-          raise "#{e.message} \n #{e.context}"
+          raise RuntimeError "#{e.message} \n #{e.context}"
         end
       end
     end

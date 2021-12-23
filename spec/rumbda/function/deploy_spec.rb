@@ -15,16 +15,20 @@ RSpec.describe Rumbda::Function::Deploy do
   end
 
   describe "#run" do
-    it "calls update_function_code on the lambda client" do
-      config.functions.each do |function|
-        expect(lambda_client).to receive(:update_function_code).with(function, config.image_uri)
+    context "when the update succeeds" do
+      it "updates the function code for all functions" do
+        config.functions.each do |function|
+          expect(lambda_client).to receive(:update_function_code).with(function, config.image_uri)
+        end
+        subject.run
       end
-      subject.run
     end
 
-    it "raises a FailedUpdateFunctionCode error if the update fails" do
-      expect(lambda_client).to receive(:update_function_code).and_raise(RuntimeError, "Something went wrong")
-      expect { subject.run }.to raise_error(Rumbda::Function::FailedUpdateFunctionCode)
+    context "when the update fails" do
+      it "raises a FailedUpdateFunctionCodes" do
+        expect(lambda_client).to receive(:update_function_code).and_raise(RuntimeError, "Something went wrong")
+        expect { subject.run }.to raise_error(Rumbda::Function::FailedUpdateFunctionCode)
+      end
     end
   end
 end
