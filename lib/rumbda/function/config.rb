@@ -7,7 +7,7 @@ module Rumbda
     class InvalidYamlError < ::Rumbda::Function::ConfigError; end
 
     class Config
-      attr_reader :service, :environment, :functions, :image_tag, :ecr_registry, :dockerfile
+      attr_reader :service, :environment, :image_tag, :ecr_registry, :dockerfile
 
       def initialize(options)
         @options = options
@@ -16,6 +16,12 @@ module Rumbda
 
       def image_uri
         @__image_uri ||= "#{ecr_registry}/#{environment}-#{service}:#{image_tag}"
+      end
+
+      def functions
+        @function_names.map do |function_name|
+          "#{environment}-#{service}-#{function_name}"
+        end
       end
 
       private
@@ -59,10 +65,10 @@ module Rumbda
       end
 
       def parse_functions!
-        @functions = options[:functions] || yaml_content[:functions]
-        raise ::Rumbda::Function::ConfigError, "functions parameter not provided" if functions.blank?
+        @function_names = options[:functions] || yaml_content[:functions]
+        raise ::Rumbda::Function::ConfigError, "functions parameter not provided" if @function_names.blank?
 
-        unless functions.instance_of?(Array) && functions.all? { |f| f.instance_of?(String) }
+        unless @function_names.instance_of?(Array) && @function_names.all? { |f| f.instance_of?(String) }
           raise ::Rumbda::Function::ConfigError, "functions parameter is not an Array of String"
         end
       end

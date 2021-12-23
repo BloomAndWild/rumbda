@@ -15,9 +15,22 @@ module Rumbda
       end
     end
 
-    class LambdaClient
-      def update_function_code(function, image_uri)
-        puts "Updating function #{function} with image #{image_uri}"
+    class LambdaClient < Thor
+      include Thor::Actions
+
+      def initialize
+        @lambda_client = Aws::Lambda::Client.new
+      end
+
+      no_commands do
+        def update_function_code(function, image_uri)
+          say "Updating function #{function} with image #{image_uri}"
+          @lambda_client.update_function_code(
+            function_name: function,
+            image_uri: image_uri
+          )
+          say "OK", :green
+        end
       end
     end
   end
