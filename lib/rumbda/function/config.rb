@@ -15,11 +15,11 @@ module Rumbda
       end
 
       def image_uri
-        @__image_uri ||= "#{ecr_registry}/#{environment}-#{service}:#{image_tag}"
+        @image_uri ||= "#{ecr_registry}/#{service}:#{image_tag}"
       end
 
       def functions
-        @__functions ||= function_names.map do |function_name|
+        @functions ||= function_names.map do |function_name|
           "#{environment}-#{service}-#{function_name}"
         end
       end
@@ -85,15 +85,6 @@ module Rumbda
 
       def parse_ecr_registry!
         @ecr_registry = options[:ecr_registry]
-        return unless ecr_registry.blank?
-
-        current_environment_config = yaml_content[:environments][environment]
-        if current_environment_config.blank?
-          raise ::Rumbda::Function::ConfigError,
-                "environments block in config file is missing options for the environment called '#{environment}'"
-        end
-
-        @ecr_registry = current_environment_config[:ecr_registry]
         raise ::Rumbda::Function::ConfigError, "ecr_registry parameter not provided" if ecr_registry.blank?
       end
     end

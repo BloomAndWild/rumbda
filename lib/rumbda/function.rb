@@ -30,9 +30,9 @@ module Rumbda
                    desc: "Lambda functions to package and deploy. Defaults to the functions list configured in the service configuration file"
 
       class_option :ecr_registry,
-                   required: false,
+                   required: true,
                    aliases: "-ecr",
-                   desc: "Name of the ECR registry to push to. Defaults to the ecr_registry value configured for the given environment"
+                   desc: "Name of the ECR registry to push to."
 
       class_option :image_tag,
                    required: true,
