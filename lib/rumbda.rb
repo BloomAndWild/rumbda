@@ -39,12 +39,12 @@ module Rumbda
                    aliases: "-t",
                    desc: "Unique Image tag to use for the deployment artifact. This is typically the git SHA being deployed"
 
-      option :dockerfile,
-             required: false,
-             type: :string,
-             aliases: "-d",
-             default: "Dockerfile",
-             desc: "Pass in a Dockerfile to use for the deployment artifact"
+      class_option :dockerfile,
+                   required: false,
+                   type: :string,
+                   aliases: "-d",
+                   default: "Dockerfile",
+                   desc: "Pass in a Dockerfile to use for the deployment artifact"
 
       desc "package", "Build and upload your function code to AWS"
       def package
