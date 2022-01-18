@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Rumbda::Function::Package do
+RSpec.describe Rumbda::Package do
   subject { described_class.new(config, docker_client) }
   let(:docker_client) { instance_double("Rumbda::Function::DockerClient") }
   let(:dockerfile) { "spec/support/test_repository/Dockerfile" }
@@ -21,7 +21,7 @@ RSpec.describe Rumbda::Function::Package do
       let(:dockerfile) { "spec/support/test_repository/Dockerfile.doesnotexist" }
 
       it "throws an error" do
-        expect { subject.run }.to raise_error(::Rumbda::Function::CannotReadDockerfile)
+        expect { subject.run }.to raise_error(::Rumbda::CannotReadDockerfile)
       end
     end
 
@@ -31,7 +31,7 @@ RSpec.describe Rumbda::Function::Package do
       end
 
       it "throws an error" do
-        expect { subject.run }.to raise_error(::Rumbda::Function::DockerBuildError)
+        expect { subject.run }.to raise_error(::Rumbda::DockerBuildError)
       end
     end
 
@@ -42,7 +42,7 @@ RSpec.describe Rumbda::Function::Package do
       end
 
       it "throws an error" do
-        expect { subject.run }.to raise_error(::Rumbda::Function::DockerPushError)
+        expect { subject.run }.to raise_error(::Rumbda::DockerPushError)
       end
     end
 
@@ -54,7 +54,7 @@ RSpec.describe Rumbda::Function::Package do
       end
 
       it "throws an error" do
-        expect { subject.run }.to raise_error(::Rumbda::Function::RemoveImageError)
+        expect { subject.run }.to raise_error(::Rumbda::RemoveImageError)
       end
     end
 

@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Rumbda::Function::Config do
+RSpec.describe Rumbda::Config do
   subject { described_class.new(options) }
 
   let(:config_file) { "spec/support/rumbda.yml" }
@@ -44,7 +44,7 @@ RSpec.describe Rumbda::Function::Config do
       context "when it doesn't exist" do
         let(:config_file) { "spec/support/rumbda.yml.doesnotexist" }
         it "throws an error" do
-          expect { subject }.to raise_error(::Rumbda::Function::CannotReadConfigFile)
+          expect { subject }.to raise_error(::Rumbda::CannotReadConfigFile)
         end
       end
     end
@@ -58,7 +58,7 @@ RSpec.describe Rumbda::Function::Config do
       context "when the config file is invalid" do
         let(:config_file) { "spec/support/rumbda_not_yaml.yml" }
         it "throws an error" do
-          expect { subject }.to raise_error(::Rumbda::Function::InvalidYamlError)
+          expect { subject }.to raise_error(::Rumbda::InvalidYamlError)
         end
       end
     end
@@ -74,7 +74,7 @@ RSpec.describe Rumbda::Function::Config do
       context "when the environment is not in the options" do
         let(:environment) { nil }
         it "throws an error" do
-          expect { subject }.to raise_error(::Rumbda::Function::ConfigError, /environment/)
+          expect { subject }.to raise_error(::Rumbda::ConfigError, /environment/)
         end
       end
     end
@@ -102,7 +102,7 @@ RSpec.describe Rumbda::Function::Config do
           end
           let(:service) { nil }
           it "throws an error" do
-            expect { subject }.to raise_error(::Rumbda::Function::ConfigError, /service/)
+            expect { subject }.to raise_error(::Rumbda::ConfigError, /service/)
           end
         end
       end
@@ -135,7 +135,7 @@ RSpec.describe Rumbda::Function::Config do
           end
           let(:functions) { nil }
           it "throws an error" do
-            expect { subject }.to raise_error(::Rumbda::Function::ConfigError, /functions/)
+            expect { subject }.to raise_error(::Rumbda::ConfigError, /functions/)
           end
         end
       end
@@ -152,7 +152,7 @@ RSpec.describe Rumbda::Function::Config do
       context "when the image tag is not in the options" do
         let(:image_tag) { nil }
         it "throws an error" do
-          expect { subject }.to raise_error(::Rumbda::Function::ConfigError, /image_tag/)
+          expect { subject }.to raise_error(::Rumbda::ConfigError, /image_tag/)
         end
       end
     end
@@ -167,7 +167,7 @@ RSpec.describe Rumbda::Function::Config do
         context "when the dockerfile is not in the options" do
           let(:dockerfile) { nil }
           it "throws an error" do
-            expect { subject }.to raise_error(::Rumbda::Function::ConfigError, /dockerfile/)
+            expect { subject }.to raise_error(::Rumbda::ConfigError, /dockerfile/)
           end
         end
       end
@@ -184,7 +184,7 @@ RSpec.describe Rumbda::Function::Config do
       context "when the ecr registry is not in the options" do
         let(:ecr_registry) { nil }
         it "throws an error" do
-          expect { subject }.to raise_error(::Rumbda::Function::ConfigError, /ecr_registry/)
+          expect { subject }.to raise_error(::Rumbda::ConfigError, /ecr_registry/)
         end
       end
     end

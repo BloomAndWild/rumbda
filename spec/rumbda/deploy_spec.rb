@@ -2,13 +2,13 @@
 
 require "spec_helper"
 
-RSpec.describe Rumbda::Function::Deploy do
+RSpec.describe Rumbda::Deploy do
   subject { described_class.new(config, lambda_client) }
 
-  let(:lambda_client) { instance_double("Rumbda::Function::LambdaClient") }
+  let(:lambda_client) { instance_double("Rumbda::LambdaClient") }
   let(:config) do
     instance_double(
-      "Rumbda::Function::Config",
+      "Rumbda::Config",
       {
         image_uri: "test-registry/test-env-servicename:SOME_TAG",
         functions: %w[one two three].map { |f| "test-env-servicename-#{f}" }
@@ -29,7 +29,7 @@ RSpec.describe Rumbda::Function::Deploy do
     context "when the update fails" do
       it "raises a FailedUpdateFunctionCodes" do
         expect(lambda_client).to receive(:update_function_code).and_raise(RuntimeError, "Something went wrong")
-        expect { subject.run }.to raise_error(Rumbda::Function::FailedUpdateFunctionCode)
+        expect { subject.run }.to raise_error(Rumbda::FailedUpdateFunctionCode)
       end
     end
   end
