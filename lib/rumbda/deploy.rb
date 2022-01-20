@@ -14,7 +14,7 @@ module Rumbda
 
     def run
       @config.functions.each do |function|
-        @lambda_client.update_function_code(function, @config.image_uri)
+        @lambda_client.update_function_code(function, @config.image_uri, @config.image_tag)
       end
     rescue RuntimeError => e
       raise FailedUpdateFunctionCode, "Failed to update function code: #{e.message}"
@@ -29,9 +29,9 @@ module Rumbda
     end
 
     no_commands do
-      def update_function_code(function, image_uri)
-        say "Updating function #{function} with image #{image_uri}"
-        @aws_lambda.update_function_code(function_name: function, image_uri: image_uri)
+      def update_function_code(function, image_uri, image_tag)
+        say "Updating function #{function} with image #{image_uri}:#{image_tag}"
+        @aws_lambda.update_function_code(function_name: function, image_uri: "#{image_uri}:#{image_tag}")
         say "OK", :green
       rescue Aws::Lambda::Errors::ServiceError => e
         raise "#{e.message} \nStatusCode #{e.context.http_response.status_code}"
