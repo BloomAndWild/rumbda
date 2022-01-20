@@ -62,7 +62,7 @@ module Rumbda
 
       def push(image_uri)
         say "Pushing image: #{image_uri}"
-        raise RuntimeError unless run "docker push --all-tags #{image_uri}"
+        raise RuntimeError unless run "docker image push --all-tags #{image_uri}"
 
         say "Done", :green
       end
