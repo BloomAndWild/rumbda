@@ -11,7 +11,9 @@ RSpec.describe Rumbda::Package do
       "Rumbda::Function::Config",
       {
         dockerfile: dockerfile,
-        image_uri: "test-registry/test-env-service:SOME_TAG"
+        image_uri: "test-registry/test-env-service:SOME_TAG",
+        image_tag: "SOME_TAG",
+        image_moving_tag: "latest",
       }
     )
   end

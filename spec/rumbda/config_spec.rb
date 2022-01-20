@@ -24,12 +24,23 @@ RSpec.describe Rumbda::Config do
     }
   end
 
-  let(:formatted_image_uri) { "#{ecr_registry}/#{service}:#{image_tag}" }
   let(:formatted_functions) { functions.map { |function| "#{environment}-#{service}-#{function}" } }
 
   describe "#image_uri" do
     it "returns a correctly formatted image uri" do
-      expect(subject.image_uri).to eq(formatted_image_uri)
+      expect(subject.image_uri).to eq("#{ecr_registry}/#{service}")
+    end
+  end
+
+  describe "#image_tag" do
+    it "returns the image tag" do
+      expect(subject.image_tag).to eq(image_tag)
+    end
+  end
+
+  describe "#image_moving_tag" do
+    it "returns a correctly formatted image moving tag" do
+      expect(subject.image_moving_tag).to eq("latest")
     end
   end
 

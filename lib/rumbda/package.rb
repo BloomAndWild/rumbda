@@ -31,7 +31,7 @@ module Rumbda
     end
 
     def build_image
-      docker_client.build_and_tag("#{Rumbda.project_root}/#{config.dockerfile}", config.image_uri)
+      docker_client.build_and_tag("#{Rumbda.project_root}/#{config.dockerfile}", config.image_uri, config.image_tag, config.image_moving_tag)
     rescue RuntimeError => e
       raise DockerBuildError, "Docker build failed for #{config.image_uri}: #{e.message}"
     end
@@ -53,16 +53,16 @@ module Rumbda
     include Thor::Actions
 
     no_commands do
-      def build_and_tag(dockerfile, image_uri)
+      def build_and_tag(dockerfile, image_uri, image_tag, moving_tag)
         say "Building image: #{image_uri} with dockerfile: #{dockerfile}..."
-        raise RuntimeError unless run "docker build -f #{dockerfile} -t #{image_uri} -t latest ."
+        raise RuntimeError unless run "docker build -f #{dockerfile} -t #{image_uri}:#{image_tag} -t #{image_uri}:#{moving_tag} ."
 
         say "Done", :green
       end
 
       def push(image_uri)
         say "Pushing image: #{image_uri}"
-        raise RuntimeError unless run "docker push #{image_uri}"
+        raise RuntimeError unless run "docker push --all-tags #{image_uri}"
 
         say "Done", :green
       end

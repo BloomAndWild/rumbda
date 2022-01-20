@@ -14,7 +14,11 @@ module Rumbda
     end
 
     def image_uri
-      @image_uri ||= "#{ecr_registry}/#{service}:#{image_tag}"
+      @image_uri ||= "#{ecr_registry}/#{service}"
+    end
+
+    def image_moving_tag
+      "latest".freeze
     end
 
     def functions
