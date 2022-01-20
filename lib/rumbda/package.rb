@@ -55,7 +55,7 @@ module Rumbda
     no_commands do
       def build_and_tag(dockerfile, image_uri)
         say "Building image: #{image_uri} with dockerfile: #{dockerfile}..."
-        raise RuntimeError unless run "docker build -f #{dockerfile} -t #{image_uri} ."
+        raise RuntimeError unless run "docker build -f #{dockerfile} -t #{image_uri} -t latest ."
 
         say "Done", :green
       end
