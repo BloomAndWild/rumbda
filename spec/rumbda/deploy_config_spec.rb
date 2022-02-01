@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Rumbda::Config do
+RSpec.describe Rumbda::DeployConfig do
   subject { described_class.new(options) }
 
   let(:config_file) { "spec/support/rumbda.yml" }
@@ -11,7 +11,6 @@ RSpec.describe Rumbda::Config do
   let(:functions) { %w[order purchase cancel] }
   let(:ecr_registry) { "ecr-petshop-registry" }
   let(:image_tag) { "SOMETAG" }
-  let(:dockerfile) { "spec/support/test_repository/Dockerfile" }
   let(:options) do
     {
       config_file: config_file,
@@ -19,8 +18,7 @@ RSpec.describe Rumbda::Config do
       service: service,
       functions: functions,
       ecr_registry: ecr_registry,
-      image_tag: image_tag,
-      dockerfile: dockerfile
+      image_tag: image_tag
     }
   end
 
@@ -35,12 +33,6 @@ RSpec.describe Rumbda::Config do
   describe "#image_tag" do
     it "returns the image tag" do
       expect(subject.image_tag).to eq(image_tag)
-    end
-  end
-
-  describe "#image_moving_tag" do
-    it "returns a correctly formatted image moving tag" do
-      expect(subject.image_moving_tag).to eq("latest")
     end
   end
 
@@ -75,13 +67,6 @@ RSpec.describe Rumbda::Config do
     end
 
     context "parsing the environment" do
-      context "when the environment is in the options" do
-        it "loads the config file" do
-          expect { subject }.to_not raise_error
-          expect(subject.environment).to eq(environment)
-        end
-      end
-
       context "when the environment is not in the options" do
         let(:environment) { nil }
         it "throws an error" do
@@ -91,19 +76,11 @@ RSpec.describe Rumbda::Config do
     end
 
     context "parsing the service" do
-      context "when the service is in the options" do
-        it "loads the config file" do
-          expect { subject }.to_not raise_error
-          expect(subject.service).to eq(service)
-        end
-      end
-
       context "when the service is not in the options" do
         context "and it is in the config file" do
           let(:service) { nil }
           it "loads the config file" do
             expect { subject }.to_not raise_error
-            expect(subject.service).to eq(parsed_service_yaml[:service])
           end
         end
 
@@ -168,30 +145,7 @@ RSpec.describe Rumbda::Config do
       end
     end
 
-    context "parsing the dockerfile" do
-      context "when the dockerfile is in the options" do
-        it "loads the config file" do
-          expect { subject }.to_not raise_error
-          expect(subject.dockerfile).to eq(dockerfile)
-        end
-
-        context "when the dockerfile is not in the options" do
-          let(:dockerfile) { nil }
-          it "throws an error" do
-            expect { subject }.to raise_error(::Rumbda::ConfigError, /dockerfile/)
-          end
-        end
-      end
-    end
-
     context "parsing the ecr registry" do
-      context "when the ecr registry is in the options" do
-        it "loads the config file" do
-          expect { subject }.to_not raise_error
-          expect(subject.ecr_registry).to eq(ecr_registry)
-        end
-      end
-
       context "when the ecr registry is not in the options" do
         let(:ecr_registry) { nil }
         it "throws an error" do

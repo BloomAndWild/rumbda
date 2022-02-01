@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
 module Rumbda
-  class ConfigError < ::Rumbda::Error; end
-  class CannotReadConfigFile < ::Rumbda::ConfigError; end
-  class InvalidYamlError < ::Rumbda::ConfigError; end
-
-  class Config
-    attr_reader :service, :environment, :image_tag, :ecr_registry, :dockerfile
+  class DeployConfig
+    attr_reader :image_tag
 
     def initialize(options)
       @options = options
@@ -17,10 +13,6 @@ module Rumbda
       @image_uri ||= "#{ecr_registry}/#{service}"
     end
 
-    def image_moving_tag
-      "latest".freeze
-    end
-
     def functions
       @functions ||= function_names.map do |function_name|
         "#{environment}-#{service}-#{function_name}"
@@ -29,7 +21,7 @@ module Rumbda
 
     private
 
-    attr_reader :yaml_content, :options, :function_names
+    attr_reader :service, :environment, :ecr_registry, :yaml_content, :options, :function_names
 
     def load!
       check_file_exists
@@ -38,7 +30,6 @@ module Rumbda
       parse_service!
       parse_functions!
       parse_image_tag!
-      parse_dockerfile!
       parse_ecr_registry!
     end
 
@@ -79,11 +70,6 @@ module Rumbda
     def parse_image_tag!
       @image_tag = options[:image_tag]
       raise ::Rumbda::ConfigError, "image_tag parameter not provided" if image_tag.blank?
-    end
-
-    def parse_dockerfile!
-      @dockerfile = options[:dockerfile]
-      raise ::Rumbda::ConfigError, "dockerfile parameter not provided" if dockerfile.blank?
     end
 
     def parse_ecr_registry!

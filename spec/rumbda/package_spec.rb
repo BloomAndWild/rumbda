@@ -4,16 +4,15 @@ require "spec_helper"
 
 RSpec.describe Rumbda::Package do
   subject { described_class.new(config, docker_client) }
-  let(:docker_client) { instance_double("Rumbda::Function::DockerClient") }
-  let(:dockerfile) { "spec/support/test_repository/Dockerfile" }
+  let(:docker_client) { instance_double("Rumbda::DockerClient") }
+  let(:dockerfile) { "#{Rumbda.project_root}/spec/support/test_repository/Dockerfile" }
   let(:config) do
     instance_double(
-      "Rumbda::Function::Config",
+      "Rumbda::PackageConfig",
       {
         dockerfile: dockerfile,
-        image_uri: "test-registry/test-env-service:SOME_TAG",
-        image_tag: "SOME_TAG",
-        image_moving_tag: "latest",
+        image_uri: "test-registry/test-env-service",
+        image_tags: %w[FIRST_TAG SECOND_TAG]
       }
     )
   end
@@ -50,7 +49,7 @@ RSpec.describe Rumbda::Package do
 
     context "when removing the image fails" do
       before do
-        expect(docker_client).to receive(:build_and_tag)
+        expect(docker_client).to receive(:build_and_tag).with(config.dockerfile, config.image_uri, config.image_tags)
         expect(docker_client).to receive(:push).with(config.image_uri)
         allow(docker_client).to receive(:remove).and_raise(RuntimeError)
       end
@@ -62,7 +61,7 @@ RSpec.describe Rumbda::Package do
 
     context "success" do
       it "builds, tags, pushes and removes the image" do
-        expect(docker_client).to receive(:build_and_tag)
+        expect(docker_client).to receive(:build_and_tag).with(config.dockerfile, config.image_uri, config.image_tags)
         expect(docker_client).to receive(:push).with(config.image_uri)
         expect(docker_client).to receive(:remove)
         subject.run
