@@ -6,27 +6,19 @@ RSpec.describe Rumbda::PackageConfig do
   subject { described_class.new(options) }
 
   let(:config_file) { "spec/support/rumbda.yml" }
-  let(:environment) { "testenv" }
   let(:service) { "petshop" }
-  let(:functions) { %w[order purchase cancel] }
   let(:ecr_registry) { "ecr-petshop-registry" }
-  let(:image_tag) { "SOMETAG" }
   let(:image_tags) { %w[FIRST_TAG SECOND_TAG] }
   let(:dockerfile) { "spec/support/test_repository/Dockerfile" }
   let(:options) do
     {
       config_file: config_file,
-      environment: environment,
       service: service,
-      functions: functions,
       ecr_registry: ecr_registry,
-      image_tag: image_tag,
       image_tags: image_tags,
       dockerfile: dockerfile
     }
   end
-
-  let(:formatted_functions) { functions.map { |function| "#{environment}-#{service}-#{function}" } }
 
   describe "#image_uri" do
     it "returns a correctly formatted image uri" do
@@ -34,21 +26,9 @@ RSpec.describe Rumbda::PackageConfig do
     end
   end
 
-  describe "#image_tag" do
-    it "returns the image tag" do
-      expect(subject.image_tag).to eq(image_tag)
-    end
-  end
-
-  describe "#image_moving_tag" do
+  describe "#image_tags" do
     it "returns a correctly formatted image moving tag" do
-      expect(subject.image_moving_tag).to eq("latest")
-    end
-  end
-
-  describe "#functions" do
-    it "returns correctly formatted function names" do
-      expect(subject.functions).to eq(formatted_functions)
+      expect(subject.image_tags).to eq(image_tags)
     end
   end
 
@@ -72,22 +52,6 @@ RSpec.describe Rumbda::PackageConfig do
         let(:config_file) { "spec/support/rumbda_not_yaml.yml" }
         it "throws an error" do
           expect { subject }.to raise_error(::Rumbda::InvalidYamlError)
-        end
-      end
-    end
-
-    context "parsing the environment" do
-      context "when the environment is in the options" do
-        it "loads the config file" do
-          expect { subject }.to_not raise_error
-          expect(subject.environment).to eq(environment)
-        end
-      end
-
-      context "when the environment is not in the options" do
-        let(:environment) { nil }
-        it "throws an error" do
-          expect { subject }.to raise_error(::Rumbda::ConfigError, /environment/)
         end
       end
     end
@@ -121,51 +85,18 @@ RSpec.describe Rumbda::PackageConfig do
       end
     end
 
-    context "parsing the functions" do
-      context "when the functions are in the options" do
+    context "parsing the image tags" do
+      context "when the image tags are in the options" do
         it "loads the config file" do
           expect { subject }.to_not raise_error
-          expect(subject.functions).to eq(formatted_functions)
+          expect(subject.image_tags).to eq(image_tags)
         end
       end
 
-      context "when the functions are not in the options" do
-        context "and they are in the config file" do
-          let(:functions) { nil }
-          let(:formatted_functions) do
-            parsed_service_yaml[:functions].map { |f| "#{environment}-#{service}-#{f}" }
-          end
-
-          it "loads the config file" do
-            expect { subject }.to_not raise_error
-            expect(subject.functions).to eq(formatted_functions)
-          end
-        end
-
-        context "and they are not in the config file" do
-          before do
-            allow(YAML).to receive(:load_file).and_return({ functions: nil })
-          end
-          let(:functions) { nil }
-          it "throws an error" do
-            expect { subject }.to raise_error(::Rumbda::ConfigError, /functions/)
-          end
-        end
-      end
-    end
-
-    context "parsing the image tag" do
-      context "when the image tag is in the options" do
-        it "loads the config file" do
-          expect { subject }.to_not raise_error
-          expect(subject.image_tag).to eq(image_tag)
-        end
-      end
-
-      context "when the image tag is not in the options" do
-        let(:image_tag) { nil }
+      context "when the image tags are not in the options" do
+        let(:image_tags) { nil }
         it "throws an error" do
-          expect { subject }.to raise_error(::Rumbda::ConfigError, /image_tag/)
+          expect { subject }.to raise_error(::Rumbda::ConfigError, /image_tags/)
         end
       end
     end
@@ -174,7 +105,7 @@ RSpec.describe Rumbda::PackageConfig do
       context "when the dockerfile is in the options" do
         it "loads the config file" do
           expect { subject }.to_not raise_error
-          expect(subject.dockerfile).to eq(dockerfile)
+          expect(subject.dockerfile).to eq("#{Rumbda.project_root}/#{dockerfile}")
         end
 
         context "when the dockerfile is not in the options" do

@@ -6,7 +6,7 @@ module Rumbda
   class InvalidYamlError < ::Rumbda::ConfigError; end
 
   class PackageConfig
-    attr_reader :service, :environment, :image_tag, :image_tags, :ecr_registry, :dockerfile
+    attr_reader :ecr_registry, :service, :dockerfile, :image_tags
 
     def initialize(options)
       @options = options
@@ -17,15 +17,6 @@ module Rumbda
       @image_uri ||= "#{ecr_registry}/#{service}"
     end
 
-    def image_moving_tag
-      "latest".freeze
-    end
-
-    def functions
-      @functions ||= function_names.map do |function_name|
-        "#{environment}-#{service}-#{function_name}"
-      end
-    end
 
     private
 
@@ -34,10 +25,7 @@ module Rumbda
     def load!
       check_file_exists
       load_yaml
-      parse_environment!
       parse_service!
-      parse_functions!
-      parse_image_tag!
       parse_image_tags!
       parse_dockerfile!
       parse_ecr_registry!
@@ -58,28 +46,9 @@ module Rumbda
       end
     end
 
-    def parse_environment!
-      @environment = options[:environment]
-      raise ::Rumbda::ConfigError, "environment parameter not provided" if environment.blank?
-    end
-
     def parse_service!
       @service = options[:service] || yaml_content[:service]
       raise ::Rumbda::ConfigError, "service parameter not provided" if service.blank?
-    end
-
-    def parse_functions!
-      @function_names = options[:functions] || yaml_content[:functions]
-      raise ::Rumbda::ConfigError, "functions parameter not provided" if function_names.blank?
-
-      unless function_names.instance_of?(Array) && function_names.all? { |f| f.instance_of?(String) }
-        raise ::Rumbda::ConfigError, "functions parameter is not an Array of String"
-      end
-    end
-
-    def parse_image_tag!
-      @image_tag = options[:image_tag]
-      raise ::Rumbda::ConfigError, "image_tag parameter not provided" if image_tag.blank?
     end
 
     def parse_image_tags!
@@ -88,8 +57,8 @@ module Rumbda
     end
 
     def parse_dockerfile!
-      @dockerfile = options[:dockerfile]
-      raise ::Rumbda::ConfigError, "dockerfile parameter not provided" if dockerfile.blank?
+      raise ::Rumbda::ConfigError, "dockerfile parameter not provided" if options[:dockerfile].blank?
+      @dockerfile = "#{Rumbda.project_root}/#{options[:dockerfile]}"
     end
 
     def parse_ecr_registry!

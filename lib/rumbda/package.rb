@@ -25,13 +25,11 @@ module Rumbda
     attr_reader :config, :docker_client
 
     def validate_dockerfile_exists
-      unless File.exist?("#{Rumbda.project_root}/#{config.dockerfile}")
-        raise CannotReadDockerfile, "Dockerfile #{Rumbda.project_root}/#{config.dockerfile} could not be found"
-      end
+      raise CannotReadDockerfile, "Dockerfile #{config.dockerfile} could not be found" unless File.exist?(config.dockerfile)
     end
 
     def build_image
-      docker_client.build_and_tag("#{Rumbda.project_root}/#{config.dockerfile}", config.image_uri, config.image_tags)
+      docker_client.build_and_tag(config.dockerfile, config.image_uri, config.image_tags)
     rescue RuntimeError => e
       raise DockerBuildError, "Docker build failed for #{config.image_uri}: #{e.message}"
     end

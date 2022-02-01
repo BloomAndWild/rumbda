@@ -35,12 +35,6 @@ module Rumbda
                    aliases: "-r",
                    desc: "Name of the ECR registry to push to."
 
-      class_option :image_tag,
-                   required: true,
-                   type: :string,
-                   aliases: "-t",
-                   desc: "Unique Image tag to use for the deployment artifact. This is typically the git SHA being deployed"
-
       class_option :dockerfile,
                    required: false,
                    type: :string,
@@ -48,13 +42,25 @@ module Rumbda
                    default: "Dockerfile",
                    desc: "Pass in a Dockerfile to use for the deployment artifact"
 
+      option :image_tags,
+                   required: true,
+                   type: :array,
+                   aliases: "-t",
+                   desc: "Unique Image tag(s) to use for the build artifact."
+                   
       desc "package", "Build and upload your function code to AWS"
       def package
-        config = Config.new(options.merge(environment: "none"))
+        config = PackageConfig.new(options)
         ::Rumbda::Package.new(config).run
       rescue ::Rumbda::Error => e
         raise ::Thor::Error, set_color(e.message, :red)
       end
+
+      option :image_tag,
+                   required: true,
+                   type: :string,
+                   aliases: "-t",
+                   desc: "Unique Image tag to use for the deploy artifact. This is typically the git SHA being deployed"
 
       option :environment,
              required: true,
