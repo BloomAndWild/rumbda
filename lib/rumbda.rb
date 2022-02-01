@@ -8,6 +8,8 @@ require "active_support/core_ext/hash" # for Hash#with_indifferent_access
 require_relative "rumbda/error"
 require_relative "rumbda/rumbda"
 require_relative "rumbda/config"
+require_relative "rumbda/package_config"
+require_relative "rumbda/deploy_config"
 require_relative "rumbda/deploy"
 require_relative "rumbda/package"
 

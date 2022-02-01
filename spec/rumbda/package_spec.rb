@@ -4,16 +4,17 @@ require "spec_helper"
 
 RSpec.describe Rumbda::Package do
   subject { described_class.new(config, docker_client) }
-  let(:docker_client) { instance_double("Rumbda::Function::DockerClient") }
+  let(:docker_client) { instance_double("Rumbda::DockerClient") }
   let(:dockerfile) { "spec/support/test_repository/Dockerfile" }
   let(:config) do
     instance_double(
-      "Rumbda::Function::Config",
+      "Rumbda::PackageConfig",
       {
         dockerfile: dockerfile,
-        image_uri: "test-registry/test-env-service:SOME_TAG",
+        image_uri: "test-registry/test-env-service",
         image_tag: "SOME_TAG",
         image_moving_tag: "latest",
+        image_tags: %w[FIRST_TAG SECOND_TAG],
       }
     )
   end
@@ -39,7 +40,7 @@ RSpec.describe Rumbda::Package do
 
     context "when pushing the image fails" do
       before do
-        allow(docker_client).to receive(:build_and_tag)
+        allow(docker_client).to receive(:build_and_tag).with(config.dockerfile, config.image_uri, config.image_tags)
         allow(docker_client).to receive(:push).and_raise(RuntimeError)
       end
 
