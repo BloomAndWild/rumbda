@@ -36,12 +36,6 @@ RSpec.describe Rumbda::DeployConfig do
     end
   end
 
-  describe "#image_moving_tag" do
-    it "returns a correctly formatted image moving tag" do
-      expect(subject.image_moving_tag).to eq("latest")
-    end
-  end
-
   describe "#functions" do
     it "returns correctly formatted function names" do
       expect(subject.functions).to eq(formatted_functions)
@@ -73,13 +67,6 @@ RSpec.describe Rumbda::DeployConfig do
     end
 
     context "parsing the environment" do
-      context "when the environment is in the options" do
-        it "loads the config file" do
-          expect { subject }.to_not raise_error
-          expect(subject.environment).to eq(environment)
-        end
-      end
-
       context "when the environment is not in the options" do
         let(:environment) { nil }
         it "throws an error" do
@@ -89,19 +76,11 @@ RSpec.describe Rumbda::DeployConfig do
     end
 
     context "parsing the service" do
-      context "when the service is in the options" do
-        it "loads the config file" do
-          expect { subject }.to_not raise_error
-          expect(subject.service).to eq(service)
-        end
-      end
-
       context "when the service is not in the options" do
         context "and it is in the config file" do
           let(:service) { nil }
           it "loads the config file" do
             expect { subject }.to_not raise_error
-            expect(subject.service).to eq(parsed_service_yaml[:service])
           end
         end
 
@@ -167,13 +146,6 @@ RSpec.describe Rumbda::DeployConfig do
     end
 
     context "parsing the ecr registry" do
-      context "when the ecr registry is in the options" do
-        it "loads the config file" do
-          expect { subject }.to_not raise_error
-          expect(subject.ecr_registry).to eq(ecr_registry)
-        end
-      end
-
       context "when the ecr registry is not in the options" do
         let(:ecr_registry) { nil }
         it "throws an error" do

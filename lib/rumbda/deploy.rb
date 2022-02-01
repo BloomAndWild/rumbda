@@ -3,9 +3,6 @@
 require "aws-sdk-lambda"
 
 module Rumbda
-  class FunctionError < ::Rumbda::Error; end
-  class FailedUpdateFunctionCode < ::Rumbda::FunctionError; end
-
   class Deploy
     def initialize(config, lambda_client = LambdaClient.new)
       @config = config

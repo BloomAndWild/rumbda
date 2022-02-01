@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
 module Rumbda
-  class ConfigError < ::Rumbda::Error; end
-  class CannotReadConfigFile < ::Rumbda::ConfigError; end
-  class InvalidYamlError < ::Rumbda::ConfigError; end
-
   class DeployConfig
-    attr_reader :service, :environment, :ecr_registry, :image_tag
+    attr_reader :image_tag
 
     def initialize(options)
       @options = options
@@ -17,10 +13,6 @@ module Rumbda
       @image_uri ||= "#{ecr_registry}/#{service}"
     end
 
-    def image_moving_tag
-      "latest"
-    end
-
     def functions
       @functions ||= function_names.map do |function_name|
         "#{environment}-#{service}-#{function_name}"
@@ -29,7 +21,7 @@ module Rumbda
 
     private
 
-    attr_reader :yaml_content, :options, :function_names
+    attr_reader :service, :environment, :ecr_registry, :yaml_content, :options, :function_names
 
     def load!
       check_file_exists

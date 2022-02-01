@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 module Rumbda
-  class PackageError < ::Rumbda::Error; end
-  class CannotReadDockerfile < ::Rumbda::PackageError; end
-  class DockerBuildError < ::Rumbda::PackageError; end
-  class DockerPushError < ::Rumbda::PackageError; end
-  class RemoveImageError < ::Rumbda::PackageError; end
-
   class Package
     def initialize(config, docker_client = DockerClient.new)
       @config = config

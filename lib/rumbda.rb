@@ -47,7 +47,7 @@ module Rumbda
              aliases: "-t",
              desc: "Unique Image tag(s) to use for the build artifact."
 
-      desc "package", "Build and upload your function code to AWS"
+      desc "package", "Build and upload your function code to a Docker registry"
       def package
         config = PackageConfig.new(options)
         ::Rumbda::Package.new(config).run

@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
 module Rumbda
-  class ConfigError < ::Rumbda::Error; end
-  class CannotReadConfigFile < ::Rumbda::ConfigError; end
-  class InvalidYamlError < ::Rumbda::ConfigError; end
-
   class PackageConfig
-    attr_reader :ecr_registry, :service, :dockerfile, :image_tags
+    attr_reader :dockerfile, :image_tags
 
     def initialize(options)
       @options = options
@@ -19,7 +15,7 @@ module Rumbda
 
     private
 
-    attr_reader :yaml_content, :options, :function_names
+    attr_reader :service, :ecr_registry, :yaml_content, :options
 
     def load!
       check_file_exists
