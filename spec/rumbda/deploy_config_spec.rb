@@ -11,7 +11,6 @@ RSpec.describe Rumbda::DeployConfig do
   let(:functions) { %w[order purchase cancel] }
   let(:ecr_registry) { "ecr-petshop-registry" }
   let(:image_tag) { "SOMETAG" }
-  let(:dockerfile) { "spec/support/test_repository/Dockerfile" }
   let(:options) do
     {
       config_file: config_file,
@@ -19,8 +18,7 @@ RSpec.describe Rumbda::DeployConfig do
       service: service,
       functions: functions,
       ecr_registry: ecr_registry,
-      image_tag: image_tag,
-      dockerfile: dockerfile
+      image_tag: image_tag
     }
   end
 
@@ -164,22 +162,6 @@ RSpec.describe Rumbda::DeployConfig do
         let(:image_tag) { nil }
         it "throws an error" do
           expect { subject }.to raise_error(::Rumbda::ConfigError, /image_tag/)
-        end
-      end
-    end
-
-    context "parsing the dockerfile" do
-      context "when the dockerfile is in the options" do
-        it "loads the config file" do
-          expect { subject }.to_not raise_error
-          expect(subject.dockerfile).to eq(dockerfile)
-        end
-
-        context "when the dockerfile is not in the options" do
-          let(:dockerfile) { nil }
-          it "throws an error" do
-            expect { subject }.to raise_error(::Rumbda::ConfigError, /dockerfile/)
-          end
         end
       end
     end

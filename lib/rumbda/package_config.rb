@@ -17,7 +17,6 @@ module Rumbda
       @image_uri ||= "#{ecr_registry}/#{service}"
     end
 
-
     private
 
     attr_reader :yaml_content, :options, :function_names
@@ -58,6 +57,7 @@ module Rumbda
 
     def parse_dockerfile!
       raise ::Rumbda::ConfigError, "dockerfile parameter not provided" if options[:dockerfile].blank?
+
       @dockerfile = "#{Rumbda.project_root}/#{options[:dockerfile]}"
     end
 

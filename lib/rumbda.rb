@@ -7,9 +7,8 @@ require "active_support/core_ext/hash" # for Hash#with_indifferent_access
 
 require_relative "rumbda/error"
 require_relative "rumbda/rumbda"
-require_relative "rumbda/config"
-require_relative "rumbda/package_config"
 require_relative "rumbda/deploy_config"
+require_relative "rumbda/package_config"
 require_relative "rumbda/deploy"
 require_relative "rumbda/package"
 
@@ -35,19 +34,19 @@ module Rumbda
                    aliases: "-r",
                    desc: "Name of the ECR registry to push to."
 
-      class_option :dockerfile,
-                   required: false,
-                   type: :string,
-                   aliases: "-d",
-                   default: "Dockerfile",
-                   desc: "Pass in a Dockerfile to use for the deployment artifact"
+      option :dockerfile,
+             required: false,
+             type: :string,
+             aliases: "-d",
+             default: "Dockerfile",
+             desc: "Pass in a Dockerfile to use for the deployment artifact"
 
       option :image_tags,
-                   required: true,
-                   type: :array,
-                   aliases: "-t",
-                   desc: "Unique Image tag(s) to use for the build artifact."
-                   
+             required: true,
+             type: :array,
+             aliases: "-t",
+             desc: "Unique Image tag(s) to use for the build artifact."
+
       desc "package", "Build and upload your function code to AWS"
       def package
         config = PackageConfig.new(options)
@@ -57,10 +56,10 @@ module Rumbda
       end
 
       option :image_tag,
-                   required: true,
-                   type: :string,
-                   aliases: "-t",
-                   desc: "Unique Image tag to use for the deploy artifact. This is typically the git SHA being deployed"
+             required: true,
+             type: :string,
+             aliases: "-t",
+             desc: "Unique Image tag to use for the deploy artifact. This is typically the git SHA being deployed"
 
       option :environment,
              required: true,
@@ -76,7 +75,7 @@ module Rumbda
 
       desc "deploy", "Update lambda function(s) code in AWS"
       def deploy
-        config = Config.new(options)
+        config = DeployConfig.new(options)
         ::Rumbda::Deploy.new(config).run
       rescue ::Rumbda::Error => e
         raise ::Thor::Error, set_color(e.message, :red)

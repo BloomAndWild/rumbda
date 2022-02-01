@@ -12,7 +12,7 @@ RSpec.describe Rumbda::Package do
       {
         dockerfile: dockerfile,
         image_uri: "test-registry/test-env-service",
-        image_tags: %w[FIRST_TAG SECOND_TAG],
+        image_tags: %w[FIRST_TAG SECOND_TAG]
       }
     )
   end
