@@ -23,7 +23,7 @@ module Rumbda
     end
 
     def build_image
-      docker_client.build_and_tag(config.dockerfile, config.image_uri, config.image_tags)
+      docker_client.build_and_tag(config.dockerfile, config.image_uri, config.image_tags, config.service_version)
     rescue RuntimeError => e
       raise DockerBuildError, "Docker build failed for #{config.image_uri}: #{e.message}"
     end
@@ -45,10 +45,10 @@ module Rumbda
     include Thor::Actions
 
     no_commands do
-      def build_and_tag(dockerfile, image_uri, image_tags)
+      def build_and_tag(dockerfile, image_uri, image_tags, service_version)
         say "Building image: #{image_uri} with dockerfile: #{dockerfile}..."
         tags = image_tags.map { |tag| "-t #{image_uri}:#{tag}" }.join(" ")
-        raise RuntimeError unless run "docker build -f #{dockerfile} #{tags} ."
+        raise RuntimeError unless run "docker build --build-arg SERVICE_VERSION=#{service_version} -f #{dockerfile} #{tags} ."
 
         say "Done", :green
       end

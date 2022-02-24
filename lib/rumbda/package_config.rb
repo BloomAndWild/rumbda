@@ -2,7 +2,7 @@
 
 module Rumbda
   class PackageConfig
-    attr_reader :dockerfile, :image_tags
+    attr_reader :dockerfile, :image_tags, :service_version
 
     def initialize(options)
       @options = options
@@ -24,6 +24,7 @@ module Rumbda
       parse_image_tags!
       parse_dockerfile!
       parse_ecr_registry!
+      parse_service_version!
     end
 
     def check_file_exists
@@ -60,6 +61,11 @@ module Rumbda
     def parse_ecr_registry!
       @ecr_registry = options[:ecr_registry]
       raise ::Rumbda::ConfigError, "ecr_registry parameter not provided" if ecr_registry.blank?
+    end
+
+    def parse_service_version!
+      @service_version = options[:service_version]
+      raise ::Rumbda::ConfigError, "service_version parameter not provided" if service_version.blank?
     end
   end
 end
