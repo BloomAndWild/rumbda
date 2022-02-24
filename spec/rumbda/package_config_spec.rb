@@ -7,6 +7,7 @@ RSpec.describe Rumbda::PackageConfig do
 
   let(:config_file) { "spec/support/rumbda.yml" }
   let(:service) { "petshop" }
+  let(:service_version) { "abcdef" }
   let(:ecr_registry) { "ecr-petshop-registry" }
   let(:image_tags) { %w[FIRST_TAG SECOND_TAG] }
   let(:dockerfile) { "spec/support/test_repository/Dockerfile" }
@@ -14,6 +15,7 @@ RSpec.describe Rumbda::PackageConfig do
     {
       config_file: config_file,
       service: service,
+      service_version: service_version,
       ecr_registry: ecr_registry,
       image_tags: image_tags,
       dockerfile: dockerfile
@@ -114,6 +116,15 @@ RSpec.describe Rumbda::PackageConfig do
         let(:ecr_registry) { nil }
         it "throws an error" do
           expect { subject }.to raise_error(::Rumbda::ConfigError, /ecr_registry/)
+        end
+      end
+    end
+
+    context "parsing the service version" do
+      context "when the service version is not in the options" do
+        let(:service_version) { nil }
+        it "throws an error" do
+          expect { subject }.to raise_error(::Rumbda::ConfigError, /service_version/)
         end
       end
     end

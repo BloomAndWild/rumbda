@@ -12,7 +12,8 @@ RSpec.describe Rumbda::Package do
       {
         dockerfile: dockerfile,
         image_uri: "test-registry/test-env-service",
-        image_tags: %w[FIRST_TAG SECOND_TAG]
+        image_tags: %w[FIRST_TAG SECOND_TAG],
+        service_version: "abcdef"
       }
     )
   end
@@ -49,7 +50,7 @@ RSpec.describe Rumbda::Package do
 
     context "when removing the image fails" do
       before do
-        expect(docker_client).to receive(:build_and_tag).with(config.dockerfile, config.image_uri, config.image_tags)
+        expect(docker_client).to receive(:build_and_tag).with(config.dockerfile, config.image_uri, config.image_tags, config.service_version)
         expect(docker_client).to receive(:push).with(config.image_uri)
         allow(docker_client).to receive(:remove).and_raise(RuntimeError)
       end
@@ -61,7 +62,7 @@ RSpec.describe Rumbda::Package do
 
     context "success" do
       it "builds, tags, pushes and removes the image" do
-        expect(docker_client).to receive(:build_and_tag).with(config.dockerfile, config.image_uri, config.image_tags)
+        expect(docker_client).to receive(:build_and_tag).with(config.dockerfile, config.image_uri, config.image_tags, config.service_version)
         expect(docker_client).to receive(:push).with(config.image_uri)
         expect(docker_client).to receive(:remove)
         subject.run

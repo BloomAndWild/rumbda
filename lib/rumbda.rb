@@ -47,6 +47,12 @@ module Rumbda
              aliases: "-t",
              desc: "Unique Image tag(s) to use for the build artifact."
 
+      option :service_version,
+             required: true,
+             type: :string,
+             aliases: "-v",
+             desc: "Version of the service to deploy."
+
       desc "package", "Build and upload your function code to a Docker registry"
       def package
         config = PackageConfig.new(options)
