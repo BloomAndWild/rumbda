@@ -5,7 +5,7 @@ require "spec_helper"
 RSpec.describe Rumbda::Deploy do
   subject { described_class.new(config, lambda_client) }
 
-  let(:lambda_client) { instance_double( "Rumbda::LambdaClient" }
+  let(:lambda_client) { instance_double( "Rumbda::LambdaClient") }
   let(:update_function_code_response) do
     instance_double()
   end
