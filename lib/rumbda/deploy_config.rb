@@ -21,7 +21,7 @@ module Rumbda
 
     private
 
-    attr_reader :service, :environment, :ecr_registry, :yaml_content, :options, :function_names
+    attr_reader :service, :environment, :ecr_registry, :yaml_content, :options, :function_names, :service_version
 
     def load!
       check_file_exists
