@@ -8,19 +8,19 @@ RSpec.describe Rumbda::Deploy do
   let(:lambda_client) { instance_double( "Rumbda::LambdaClient") }
   let(:update_function_code_response) do
     instance_double(
-      "Rumbda::DeployConfig",
+      "Aws::Lambda::Types::FunctionConfiguration",
       {
-        image_uri: "test-registry/test-env-servicename",
-        image_tag: "SOME_TAG",
-        functions: %w[one two three].map { |f| "test-env-servicename-#{f}" }
+        function_arn: "foo"
       }
     )
   end
   let(:config) do
     instance_double(
-      "Aws::Lambda::Types::FunctionConfiguration",
+      "Rumbda::DeployConfig",
       {
-        function_arn: "foo"
+        image_uri: "test-registry/test-env-servicename",
+        image_tag: "SOME_TAG",
+        functions: %w[one two three].map { |f| "test-env-servicename-#{f}" }
       }
     )
   end
