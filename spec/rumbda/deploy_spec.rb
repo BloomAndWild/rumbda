@@ -12,7 +12,8 @@ RSpec.describe Rumbda::Deploy do
       {
         image_uri: "test-registry/test-env-servicename",
         image_tag: "SOME_TAG",
-        functions: %w[one two three].map { |f| "test-env-servicename-#{f}" }
+        functions: %w[one two three].map { |f| "test-env-servicename-#{f}" },
+        service_version: "SOME_VERSION"
       }
     )
   end
