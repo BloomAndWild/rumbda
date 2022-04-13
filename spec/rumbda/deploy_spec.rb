@@ -30,7 +30,7 @@ RSpec.describe Rumbda::Deploy do
       it "updates the function code for all functions" do
         config.functions.each do |function|
           expect(lambda_client).to receive(:update_function_code).with(function, config.image_uri, config.image_tag, config.service_version)
-          expect(lambda_client).to receive(:tag_resource).with(resource: "foo", { "version" => config.service_version })
+          expect(lambda_client).to receive(:tag_resource).with(resource: "foo", tags: { "version" => config.service_version })
         end
         subject.run
       end
