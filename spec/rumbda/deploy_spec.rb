@@ -5,15 +5,22 @@ require "spec_helper"
 RSpec.describe Rumbda::Deploy do
   subject { described_class.new(config, lambda_client) }
 
-  let(:lambda_client) { instance_double("Rumbda::LambdaClient") }
+  let(:lambda_client) do
+    instance_double(
+      "Rumbda::LambdaClient",
+      {
+      update_function_code: update_function_code_response
+      }
+    )
+  end
+  let(:update_function_code_response) do
+    instance_double()
+  end
   let(:config) do
     instance_double(
-      "Rumbda::DeployConfig",
+      "Aws::Lambda::Types::FunctionConfiguration",
       {
-        image_uri: "test-registry/test-env-servicename",
-        image_tag: "SOME_TAG",
-        functions: %w[one two three].map { |f| "test-env-servicename-#{f}" },
-        service_version: "SOME_VERSION"
+        function_arn: "foo"
       }
     )
   end
@@ -23,6 +30,7 @@ RSpec.describe Rumbda::Deploy do
       it "updates the function code for all functions" do
         config.functions.each do |function|
           expect(lambda_client).to receive(:update_function_code).with(function, config.image_uri, config.image_tag, config.service_version)
+          expect(lambda_client).to receive(:tag_resource).with(resource: "foo", { "version" => config.service_version })
         end
         subject.run
       end
