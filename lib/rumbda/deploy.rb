@@ -28,7 +28,8 @@ module Rumbda
     no_commands do
       def update_function_code(function, image_uri, image_tag)
         say "Updating function #{function} with image #{image_uri}:#{image_tag}"
-        @aws_lambda.update_function_code(function_name: function, image_uri: "#{image_uri}:#{image_tag}")
+        response = @aws_lambda.update_function_code(function_name: function, image_uri: "#{image_uri}:#{image_tag}")
+        puts response.to_h
         say "OK", :green
       rescue Aws::Lambda::Errors::ServiceError => e
         raise "#{e.message} \nStatusCode #{e.context.http_response.status_code}"
