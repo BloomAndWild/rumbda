@@ -31,6 +31,7 @@ module Rumbda
       parse_functions!
       parse_image_tag!
       parse_ecr_registry!
+      parse_service_version!
     end
 
     def check_file_exists
@@ -75,6 +76,11 @@ module Rumbda
     def parse_ecr_registry!
       @ecr_registry = options[:ecr_registry]
       raise ::Rumbda::ConfigError, "ecr_registry parameter not provided" if ecr_registry.blank?
+    end
+
+    def parse_service_version!
+      @service_version = options[:service_version]
+      raise ::Rumbda::ConfigError, "service_version parameter not provided" if service_version.blank?
     end
   end
 end
