@@ -2,7 +2,7 @@
 
 module Rumbda
   class DeployConfig
-    attr_reader :image_tag
+    attr_reader :image_tag, :service_version
 
     def initialize(options)
       @options = options
@@ -21,7 +21,7 @@ module Rumbda
 
     private
 
-    attr_reader :service, :environment, :ecr_registry, :yaml_content, :options, :function_names, :service_version
+    attr_reader :service, :environment, :ecr_registry, :yaml_content, :options, :function_names
 
     def load!
       check_file_exists
