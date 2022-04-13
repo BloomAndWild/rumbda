@@ -7,7 +7,14 @@ RSpec.describe Rumbda::Deploy do
 
   let(:lambda_client) { instance_double( "Rumbda::LambdaClient") }
   let(:update_function_code_response) do
-    instance_double()
+    instance_double(
+      "Rumbda::DeployConfig",
+      {
+        image_uri: "test-registry/test-env-servicename",
+        image_tag: "SOME_TAG",
+        functions: %w[one two three].map { |f| "test-env-servicename-#{f}" }
+      }
+    )
   end
   let(:config) do
     instance_double(
