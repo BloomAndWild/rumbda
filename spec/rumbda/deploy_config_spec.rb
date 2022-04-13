@@ -11,6 +11,7 @@ RSpec.describe Rumbda::DeployConfig do
   let(:functions) { %w[order purchase cancel] }
   let(:ecr_registry) { "ecr-petshop-registry" }
   let(:image_tag) { "SOMETAG" }
+  let(:service_version) { "SOME_VERSION" }
   let(:options) do
     {
       config_file: config_file,
@@ -18,7 +19,8 @@ RSpec.describe Rumbda::DeployConfig do
       service: service,
       functions: functions,
       ecr_registry: ecr_registry,
-      image_tag: image_tag
+      image_tag: image_tag,
+      service_version: service_version
     }
   end
 
