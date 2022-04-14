@@ -79,6 +79,12 @@ module Rumbda
              aliases: "-f",
              desc: "Lambda functions to package and deploy. Defaults to the functions list configured in the service configuration file"
 
+      option :service_version,
+             required: true,
+             type: :string,
+             aliases: "-v",
+             desc: "Version of the service to deploy."
+
       desc "deploy", "Update lambda function(s) code in AWS"
       def deploy
         config = DeployConfig.new(options)
