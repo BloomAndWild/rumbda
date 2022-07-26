@@ -12,4 +12,4 @@
 
 require_relative "../lib/rumbda"
 
-Rumbda::Cli::Main.start(ARGV.first.split(" "))
+Rumbda::Cli::Main.start(ARGV&.first&.split(" ") || [])
