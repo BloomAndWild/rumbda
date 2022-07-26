@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# NOTE!
+# This file is intended to be used by a GitHub Action.
+# Because Actions will always pass args as a single string,
+# we have to split them on the space.
+# So for example, instead of 
+# rumbda help deploy
+# it will pass in
+# rumbda "help deploy"
+
+require_relative "../lib/rumbda"
+
+Rumbda::Cli::Main.start(ARGV&.first&.split(" ") || [])
