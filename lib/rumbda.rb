@@ -61,6 +61,12 @@ module Rumbda
         raise ::Thor::Error, set_color(e.message, :red)
       end
 
+      option :ecr_registry,
+              required: true,
+              type: :string,
+              aliases: "-r",
+              desc: "Name of the ECR registry to push to."
+
       option :image_tag,
              required: true,
              type: :string,
