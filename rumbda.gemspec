@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "lib/rumbda/rumbda"
+require_relative "lib/rumbda/version"
 
 Gem::Specification.new do |spec|
   spec.name = "rumbda"
@@ -20,18 +20,16 @@ Gem::Specification.new do |spec|
   spec.metadata["documentation_uri"] = "https://github.com/BloomAndWild/rumbda/blob/master/README.md"
   spec.metadata["changelog_uri"] = "https://github.com/BloomAndWild/rumbda/blob/master/CHANGELOG.md"
 
-  spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    `git ls-files -z`.split("\x0").reject do |f|
-      (f == __FILE__) || f.match(%r{\A(?:(?:test|spec|features)/|\.(?:git|travis|circleci)|appveyor)})
-    end
-  end
+  spec.files = (Dir['lib/**/*.rb'] + Dir['exe/*'] + Dir['[A-Z]*']).reject do |f| 
+    File.read('.gitignore').split.include?(f)
+  end 
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "activesupport"
-  spec.add_dependency "aws-sdk-lambda"
-  spec.add_dependency "thor"
+  spec.add_dependency "activesupport", "~> 7.0"
+  spec.add_dependency "aws-sdk-lambda", "~> 1.0"
+  spec.add_dependency "thor", "~> 1.0"
 
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.2"
