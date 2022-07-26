@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rake/file_list"
 require_relative "lib/rumbda/version"
 
 Gem::Specification.new do |spec|
@@ -21,7 +20,9 @@ Gem::Specification.new do |spec|
   spec.metadata["documentation_uri"] = "https://github.com/BloomAndWild/rumbda/blob/master/README.md"
   spec.metadata["changelog_uri"] = "https://github.com/BloomAndWild/rumbda/blob/master/CHANGELOG.md"
 
-  spec.files = Rake::FileList['lib/**/*.rb', 'exe/*', '[A-Z]*'].exclude(*File.read('.gitignore').split).to_a
+  spec.files = (Dir['lib/**/*.rb'] + Dir['exe/*'] + Dir['[A-Z]*']).reject do |f| 
+    File.read('.gitignore').split.include?(f)
+  end 
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
