@@ -6,7 +6,7 @@ require "active_support/isolated_execution_state"
 require "active_support/core_ext/hash" # for Hash#with_indifferent_access
 
 require_relative "rumbda/error"
-require_relative "rumbda/rumbda"
+require_relative "rumbda/version"
 require_relative "rumbda/deploy_config"
 require_relative "rumbda/package_config"
 require_relative "rumbda/deploy"
@@ -28,11 +28,11 @@ module Rumbda
                    aliases: "-s",
                    desc: "Name of the service to deploy to. Defaults to the service configured in the service configuration file"
 
-      class_option :ecr_registry,
-                   required: true,
-                   type: :string,
-                   aliases: "-r",
-                   desc: "Name of the ECR registry to push to."
+      option :ecr_registry,
+              required: true,
+              type: :string,
+              aliases: "-r",
+              desc: "Name of the ECR registry to push to."
 
       option :dockerfile,
              required: false,
@@ -60,6 +60,12 @@ module Rumbda
       rescue ::Rumbda::Error => e
         raise ::Thor::Error, set_color(e.message, :red)
       end
+
+      option :ecr_registry,
+              required: true,
+              type: :string,
+              aliases: "-r",
+              desc: "Name of the ECR registry to push to."
 
       option :image_tag,
              required: true,
