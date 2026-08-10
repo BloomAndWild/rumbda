@@ -1,0 +1,12 @@
+name: 'rumbda'
+inputs:
+  command:
+    description: "the command to pass to rumbda"
+    required: false
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.command }}
+  
+  
